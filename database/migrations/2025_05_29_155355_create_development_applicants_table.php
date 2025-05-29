@@ -11,23 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('head_of_families', function (Blueprint $table) {
+        Schema::create('development_applicants', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
-            $table->uuid('user_id')->unique();
+            $table->uuid('development_id');
+            $table->foreign('development_id')
+                ->references('id')
+                ->on('developments')
+                ->onDelete('cascade');
+            $table->uuid('user_id');
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->string('profile_picture')->nullable();
-            $table->integer('identity_number')->unique();
-            $table->enum('gender', ['male', 'female']);
-            $table->date('date_of_birth')->nullable();
-            $table->string('phone_number')->nullable();
-            $table->string('occupation')->nullable();
-            $table->enum('marital_status', ['single', 'married']);
-
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
 
             $table->softDeletes();
             $table->timestamps();
@@ -39,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('head_of_families');
+        Schema::dropIfExists('development_applicants');
     }
 };

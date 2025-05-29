@@ -6,9 +6,9 @@ use App\Traits\UUID;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class HeadOfFamily extends Model
+class FamilyMember extends Model
 {
-    //'
+    //
     use UUID, SoftDeletes;
 
     protected $fillable = [
@@ -20,25 +20,15 @@ class HeadOfFamily extends Model
         'phone_number',
         'occupation',
         'marital_status',
+        'relation',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
-    public function familyMembers()
+    public function headOfFamily()
     {
-        return $this->hasMany(FamilyMember::class);
-    }
-
-    public function socialAssistanceRecipients()
-    {
-        return $this->hasMany(SocialAssistanceRecipient::class);
-    }
-
-    public function eventParticipants()
-    {
-        return $this->hasMany(EventParticipant::class);
+        return $this->belongsTo(HeadOfFamily::class);
     }
 }
