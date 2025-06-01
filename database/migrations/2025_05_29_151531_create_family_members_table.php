@@ -15,10 +15,16 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             $table->uuid('head_of_family_id')->unique();
-            $table->foreignId('head_of_family_id')->constrained('head_of_families')->onDelete('cascade');
+            $table->foreign('head_of_family_id')
+                ->references('id')
+                ->on('head_of_families')
+                ->onDelete('cascade');
 
             $table->uuid('user_id')->unique();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
 
             $table->string('profile_picture')->nullable();
             $table->integer('identity_number')->unique();
