@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\PaginateResource;
 use App\Http\Resources\UserResource;
 use App\Interfaces\UserRepositoryInterface;
@@ -96,14 +97,48 @@ class UserController extends Controller
     public function show(string $id)
     {
         //
+        try {
+            $user = $this->userRepository->getById($id);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'User retrieved successfully',
+                new UserResource($user),
+                200
+            );
+
+            if (!$user) {
+                return ResponseHelper::JsonResponse(false, 'User not found', null, 404);
+            }
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request, string $id)
     {
         //
+        $data = $request->validated();
+        try {
+            $user = $this->userRepository->getById($id);
+            if (!$user) {
+                return ResponseHelper::JsonResponse(false, 'User not found', null, 404);
+            }
+
+            $user = $this->userRepository->update($id, $data);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'User updated successfully',
+                new UserResource($user),
+                200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**
