@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Http\Requests\HeadOfFamilyStoreRequest;
 use App\Http\Resources\HeadOfFamilyResource;
 use App\Http\Resources\PaginateResource;
 use App\Interfaces\HeadOfFamilyRepositoryInterface;
@@ -70,9 +71,23 @@ class HeadOfFamilyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(HeadOfFamilyStoreRequest $request)
     {
         //
+        $data = $request->validated();
+
+        try {
+            $headOfFamily = $this->headOfFamilyRepository->create($data);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'Head of Family created successfully',
+                new HeadOfFamilyResource($headOfFamily),
+                201
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**

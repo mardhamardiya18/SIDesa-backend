@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\HeadOfFamilyRepositoryInterface;
 use App\Models\HeadOfFamily;
+use Illuminate\Support\Facades\DB;
 
 class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
 {
@@ -14,7 +15,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
     ) {
         // Implementation of the method to get all users
 
-        $query = HeadOfFamily::where(function ($query) use ($search) {
+        $query = HeadOfFamily::with('user')->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }
@@ -37,5 +38,36 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
         $query = $this->getAll($search, $rowsPerPage, false);
 
         return $query->paginate($rowsPerPage);
+    }
+
+    public function create(array $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            $userRepository = new UserRepository();
+            $user = $userRepository->create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => $data['password'],
+            ]);
+
+            $headOfFamily = new HeadOfFamily();
+            $headOfFamily->user_id = $user->id;
+            $headOfFamily->profile_picture = $data['profile_picture']->store('assets/head_of_family', 'public');
+            $headOfFamily->identity_number = $data['identity_number'];
+            $headOfFamily->gender = $data['gender'];
+            $headOfFamily->date_of_birth = $data['date_of_birth'];
+            $headOfFamily->phone_number = $data['phone_number'];
+            $headOfFamily->occupation = $data['occupation'];
+            $headOfFamily->marital_status = $data['marital_status'];
+            $headOfFamily->save();
+
+            DB::commit();
+            return $headOfFamily;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
     }
 }

@@ -16,7 +16,7 @@ class HeadOfFamilyResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user' => new UserResource($this->user),
+            'user' => new UserResource($this->whenLoaded('user')),
             'profile_pictire' => $this->profile_picture,
             'identity_number' => $this->identity_number,
             'gender' => $this->gender,
