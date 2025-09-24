@@ -70,4 +70,8 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
             throw new \Exception($e->getMessage());
         }
     }
+    public function getById(string $id)
+    {
+        return HeadOfFamily::with('user')->findOrFail($id);
+    }
 }

@@ -95,7 +95,22 @@ class HeadOfFamilyController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $headOfFamily = $this->headOfFamilyRepository->getById($id);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'headOfFamily retrieved successfully',
+                new HeadOfFamilyResource($headOfFamily),
+                200
+            );
+
+            if (!$headOfFamily) {
+                return ResponseHelper::JsonResponse(false, 'headOfFamily not found', null, 404);
+            }
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**
