@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\HeadOfFamilyStoreRequest;
+use App\Http\Requests\HeadOfFamilyUpdateRequest;
 use App\Http\Resources\HeadOfFamilyResource;
 use App\Http\Resources\PaginateResource;
 use App\Interfaces\HeadOfFamilyRepositoryInterface;
+use App\Models\HeadOfFamily;
 use Illuminate\Http\Request;
 
 class HeadOfFamilyController extends Controller
@@ -116,9 +118,23 @@ class HeadOfFamilyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(HeadOfFamilyUpdateRequest $request, HeadOfFamily $headOfFamily)
     {
-        //
+        $data = $request->validated();
+
+        try {
+
+            $headOfFamily = $this->headOfFamilyRepository->update($headOfFamily->id, $data);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'Head of Family updated successfully',
+                new HeadOfFamilyResource($headOfFamily),
+                200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**

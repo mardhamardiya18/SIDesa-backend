@@ -72,6 +72,7 @@ class UserRepository implements UserRepositoryInterface
             $user = User::findOrFail($id);
 
             $user->name = $data['name'];
+            $user->email = $data['email'];
 
 
             if (isset($data['password'])) {

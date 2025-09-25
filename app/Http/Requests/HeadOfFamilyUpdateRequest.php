@@ -2,25 +2,29 @@
 
 namespace App\Http\Requests;
 
+use App\Models\HeadOfFamily;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class HeadOfFamilyStoreRequest extends FormRequest
+class HeadOfFamilyUpdateRequest extends FormRequest
 {
 
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+
+
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'profile_picture' => 'required|image|max:2048',
-            'identity_number' => 'required|string|size:10|unique:head_of_families',
+            'email' => [
+                'nullable',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($this->route('head_of_family')->user->id),
+            ],
+            'password' => 'nullable|string|min:8|confirmed',
+            'profile_picture' => 'nullable|image|max:2048',
+            'identity_number' => 'required|string|size:10',
             'gender' => 'required|in:male,female|string',
             'date_of_birth' => 'required|date',
             'phone_number' => 'required|string|max:15',
