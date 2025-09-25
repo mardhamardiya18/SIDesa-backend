@@ -61,7 +61,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function getById(string $id)
     {
-        return User::findOrFail($id);
+        return User::find($id);
     }
 
     public function update(string $id, array $data)
@@ -69,7 +69,7 @@ class UserRepository implements UserRepositoryInterface
         DB::beginTransaction();
 
         try {
-            $user = User::findOrFail($id);
+            $user = User::find($id);
 
             $user->name = $data['name'];
             $user->email = $data['email'];

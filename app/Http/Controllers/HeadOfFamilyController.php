@@ -100,16 +100,16 @@ class HeadOfFamilyController extends Controller
         try {
             $headOfFamily = $this->headOfFamilyRepository->getById($id);
 
+            if (!$headOfFamily) {
+                return ResponseHelper::JsonResponse(false, 'headOfFamily not found', null, 404);
+            }
+
             return ResponseHelper::JsonResponse(
                 true,
                 'headOfFamily retrieved successfully',
                 new HeadOfFamilyResource($headOfFamily),
                 200
             );
-
-            if (!$headOfFamily) {
-                return ResponseHelper::JsonResponse(false, 'headOfFamily not found', null, 404);
-            }
         } catch (\Exception $e) {
             return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
         }
@@ -124,7 +124,7 @@ class HeadOfFamilyController extends Controller
 
         try {
 
-            $headOfFamily = $this->headOfFamilyRepository->update($headOfFamily->id, $data);
+            $headOfFamily = $this->headOfFamilyRepository->update($headOfFamily, $data);
 
             return ResponseHelper::JsonResponse(
                 true,
@@ -140,8 +140,20 @@ class HeadOfFamilyController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(HeadOfFamily $headOfFamily)
     {
         //
+        try {
+            $this->headOfFamilyRepository->delete($headOfFamily);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'Head of Family deleted successfully',
+                null,
+                200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 }

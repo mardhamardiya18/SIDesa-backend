@@ -2,6 +2,8 @@
 
 namespace App\Interfaces;
 
+use PhpParser\Node\Expr\Cast\Object_;
+
 interface HeadOfFamilyRepositoryInterface
 {
     public function getAll(
@@ -18,5 +20,7 @@ interface HeadOfFamilyRepositoryInterface
     public function create(array $data);
     public function getById(string $id);
 
-    public function update(string $id, array $data);
+    public function update(object $item, array $data);
+
+    public function delete(object $item);
 }

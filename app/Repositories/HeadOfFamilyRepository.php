@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\HeadOfFamilyRepositoryInterface;
 use App\Models\HeadOfFamily;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
 {
@@ -72,37 +73,58 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
     }
     public function getById(string $id)
     {
-        return HeadOfFamily::with('user')->findOrFail($id);
+        return HeadOfFamily::with('user')->find($id);
     }
 
-    public function update(string $id, array $data)
+    public function update(object $item, array $data)
+    {
+
+
+        DB::beginTransaction();
+
+        try {
+
+            $userRepository = new UserRepository();
+
+            $userRepository->update($item->user_id, [
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => isset($data['password']) ? bcrypt($data['password']) : $item->user->password,
+            ]);
+
+            if (isset($data['profile_picture'])) {
+                $item->profile_picture = $data['profile_picture']->store('assets/head_of_family', 'public');
+            }
+
+            $item->identity_number = $data['identity_number'];
+            $item->gender = $data['gender'];
+            $item->date_of_birth = $data['date_of_birth'];
+            $item->phone_number = $data['phone_number'];
+            $item->occupation = $data['occupation'];
+            $item->marital_status = $data['marital_status'];
+            $item->save();
+
+            DB::commit();
+            return $item;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    public function delete(object $item)
     {
         DB::beginTransaction();
 
         try {
-            $headOfFamily = HeadOfFamily::findOrFail($id);
-            $userRepository = new UserRepository();
 
-            $userRepository->update($headOfFamily->user_id, [
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => isset($data['password']) ? bcrypt($data['password']) : $headOfFamily->user->password,
-            ]);
-
-            if (isset($data['profile_picture'])) {
-                $headOfFamily->profile_picture = $data['profile_picture']->store('assets/head_of_family', 'public');
+            if ($item->profile_picture) {
+                Storage::disk('public')->delete($item->profile_picture);
             }
-
-            $headOfFamily->identity_number = $data['identity_number'];
-            $headOfFamily->gender = $data['gender'];
-            $headOfFamily->date_of_birth = $data['date_of_birth'];
-            $headOfFamily->phone_number = $data['phone_number'];
-            $headOfFamily->occupation = $data['occupation'];
-            $headOfFamily->marital_status = $data['marital_status'];
-            $headOfFamily->save();
+            $item->delete();
 
             DB::commit();
-            return $headOfFamily;
+            return true;
         } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
