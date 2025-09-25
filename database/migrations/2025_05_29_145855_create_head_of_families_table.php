@@ -21,7 +21,7 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->string('profile_picture')->nullable();
-            $table->integer('identity_number')->unique();
+            $table->bigInteger('identity_number')->unique();
             $table->enum('gender', ['male', 'female']);
             $table->date('date_of_birth')->nullable();
             $table->string('phone_number')->nullable();

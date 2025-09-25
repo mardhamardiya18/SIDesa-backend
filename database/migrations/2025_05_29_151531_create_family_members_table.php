@@ -14,20 +14,20 @@ return new class extends Migration
         Schema::create('family_members', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->uuid('head_of_family_id')->unique();
+            $table->uuid('head_of_family_id');
             $table->foreign('head_of_family_id')
                 ->references('id')
                 ->on('head_of_families')
                 ->onDelete('cascade');
 
-            $table->uuid('user_id')->unique();
+            $table->uuid('user_id');
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
 
             $table->string('profile_picture')->nullable();
-            $table->integer('identity_number')->unique();
+            $table->bigInteger('identity_number')->unique();
             $table->enum('gender', ['male', 'female']);
             $table->date('date_of_birth')->nullable();
             $table->string('phone_number')->nullable();
