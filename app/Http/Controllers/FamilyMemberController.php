@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Http\Requests\FamilyMemberStoreRequest;
 use App\Http\Resources\FamilyMemberResource;
 use App\Http\Resources\PaginateResource;
 use App\Interfaces\FamilyMemberRepositoryInterface;
@@ -68,9 +69,22 @@ class FamilyMemberController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(FamilyMemberStoreRequest $request)
     {
-        //
+        $request = $request->validated();
+
+        try {
+            $familyMember = $this->familyMemberRepository->create($request);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'Family Member created successfully',
+                new FamilyMemberResource($familyMember),
+                200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**
@@ -79,6 +93,27 @@ class FamilyMemberController extends Controller
     public function show(string $id)
     {
         //
+        try {
+            $familyMember = $this->familyMemberRepository->getById($id);
+
+            if (!$familyMember) {
+                return ResponseHelper::JsonResponse(false, 'Family Member not found', null, 404);
+            }
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'Family Member retrieved successfully',
+                new FamilyMemberResource($familyMember),
+                200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(
+                false,
+                $e->getMessage(),
+                null,
+                500
+            );
+        }
     }
 
     /**

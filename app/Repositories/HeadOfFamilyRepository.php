@@ -73,7 +73,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
     }
     public function getById(string $id)
     {
-        return HeadOfFamily::with('user')->find($id);
+        return HeadOfFamily::with(['user', 'familyMembers'])->find($id);
     }
 
     public function update(object $item, array $data)

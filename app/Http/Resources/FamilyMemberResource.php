@@ -17,7 +17,7 @@ class FamilyMemberResource extends JsonResource
         return [
             'id' => $this->id,
             'head_of_family_id' => new HeadOfFamilyResource($this->whenLoaded('headOfFamily')),
-            'user' => new UserResource($this->whenLoaded('user')),
+            'user' => new UserResource($this->user),
             'profile_pictire' => $this->profile_picture,
             'identity_number' => $this->identity_number,
             'gender' => $this->gender,
@@ -25,6 +25,7 @@ class FamilyMemberResource extends JsonResource
             'phone_number' => $this->phone_number,
             'occupation' => $this->occupation,
             'marital_status' => $this->marital_status,
+            'relation' => $this->relation,
 
         ];
     }
