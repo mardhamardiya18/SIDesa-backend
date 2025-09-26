@@ -93,9 +93,19 @@ class SocialAssistanceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(SocialAssistance $socialAssistance)
     {
         //
+        try {
+            return ResponseHelper::JsonResponse(
+                true,
+                'Social Assistance retrieved successfully',
+                new SocialAssistanceResource($socialAssistance),
+                200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**
