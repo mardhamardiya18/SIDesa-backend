@@ -60,6 +60,11 @@ class SocialAssistanceRepository implements SocialAssistanceRepositoryInterface
         }
     }
 
+    public function getById(string $id)
+    {
+        return SocialAssistance::find($id);
+    }
+
     public function update(object $item, array $data)
     {
         DB::beginTransaction();
@@ -81,6 +86,22 @@ class SocialAssistanceRepository implements SocialAssistanceRepositoryInterface
             DB::commit();
 
             return $item;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function delete(object $item)
+    {
+        DB::beginTransaction();
+
+        try {
+            $item->thumbnail && Storage::disk('public')->delete($item->thumbnail);
+            $item->delete();
+
+            DB::commit();
+            return true;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

@@ -17,5 +17,9 @@ interface SocialAssistanceRepositoryInterface
 
     public function create(array $data);
 
+    public function getById(string $id);
+
     public function update(object $item, array $data);
+
+    public function delete(object $item);
 }

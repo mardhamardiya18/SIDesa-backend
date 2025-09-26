@@ -94,10 +94,15 @@ class SocialAssistanceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(SocialAssistance $socialAssistance)
+    public function show(string $id)
     {
         //
         try {
+            $socialAssistance = $this->socialAssistanceRepository->getById($id);
+            if (!$socialAssistance) {
+                return ResponseHelper::JsonResponse(false, 'Social Assistance not found', null, 404);
+            }
+
             return ResponseHelper::JsonResponse(
                 true,
                 'Social Assistance retrieved successfully',
@@ -134,8 +139,20 @@ class SocialAssistanceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(SocialAssistance $socialAssistance)
     {
         //
+        try {
+            $this->socialAssistanceRepository->delete($socialAssistance);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'Social Assistance deleted successfully',
+                null,
+                200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 }
