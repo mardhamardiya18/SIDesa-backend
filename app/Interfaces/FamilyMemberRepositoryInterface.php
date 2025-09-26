@@ -18,4 +18,6 @@ interface FamilyMemberRepositoryInterface
     public function create(array $data);
 
     public function getById(string $id);
+
+    public function update(object $item, array $data);
 }

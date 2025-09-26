@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\FamilyMemberStoreRequest;
+use App\Http\Requests\FamilyMemberUpdateRequest;
 use App\Http\Resources\FamilyMemberResource;
 use App\Http\Resources\PaginateResource;
 use App\Interfaces\FamilyMemberRepositoryInterface;
@@ -119,10 +120,24 @@ class FamilyMemberController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(FamilyMemberUpdateRequest $request, FamilyMember $familyMember)
     {
-        //
+        $data = $request->validated();
+
+        try {
+            $updatedFamilyMember = $this->familyMemberRepository->update($familyMember, $data);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'Family Member updated successfully',
+                new FamilyMemberResource($updatedFamilyMember),
+                200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
