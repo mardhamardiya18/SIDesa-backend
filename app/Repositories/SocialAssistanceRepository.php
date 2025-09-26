@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\SocialAssistanceRepositoryInterface;
 use App\Models\SocialAssistance;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class SocialAssistanceRepository implements SocialAssistanceRepositoryInterface
 {
@@ -53,6 +54,33 @@ class SocialAssistanceRepository implements SocialAssistanceRepositoryInterface
             DB::commit();
 
             return $socialAssistance;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function update(object $item, array $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            if (isset($data['thumbnail'])) {
+                $item->thumbnail && Storage::disk('public')->delete($item->thumbnail);
+                $item->thumbnail = $data['thumbnail']->store('assets/social_assistance', 'public');
+            }
+
+            $item->name = $data['name'];
+            $item->category = $data['category'];
+            $item->amount = $data['amount'];
+            $item->provider = $data['provider'];
+            $item->description = $data['description'];
+            $item->is_active = $data['is_active'];
+            $item->save();
+
+            DB::commit();
+
+            return $item;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

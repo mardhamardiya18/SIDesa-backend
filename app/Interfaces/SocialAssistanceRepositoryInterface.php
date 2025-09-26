@@ -16,4 +16,6 @@ interface SocialAssistanceRepositoryInterface
     );
 
     public function create(array $data);
+
+    public function update(object $item, array $data);
 }
