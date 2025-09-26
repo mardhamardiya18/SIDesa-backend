@@ -23,6 +23,17 @@ class SocialAssistance extends Model
 
     ];
 
+    public function scopeSearch($query, $search)
+    {
+        if ($search) {
+            $query->where('name', 'like', "%$search%")
+                ->orWhere('category', 'like', "%$search%")
+                ->orWhere('provider', 'like', "%$search%");
+        }
+
+        return $query;
+    }
+
     public function socialAssistanceRecipients()
     {
         return $this->hasMany(SocialAssistanceRecipient::class);
