@@ -142,8 +142,20 @@ class FamilyMemberController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(FamilyMember $familyMember)
     {
         //
+        try {
+            $this->familyMemberRepository->delete($familyMember);
+
+            return ResponseHelper::JsonResponse(
+                true,
+                'Family Member deleted successfully',
+                null,
+                200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::JsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 }

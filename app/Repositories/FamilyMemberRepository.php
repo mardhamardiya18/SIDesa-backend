@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\FamilyMemberRepositoryInterface;
 use App\Models\FamilyMember;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class FamilyMemberRepository implements FamilyMemberRepositoryInterface
 {
@@ -109,6 +110,28 @@ class FamilyMemberRepository implements FamilyMemberRepositoryInterface
 
             DB::commit();
             return $item;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    public function delete(object $item)
+    {
+        DB::beginTransaction();
+
+        try {
+            $userRepository = new UserRepository();
+            $userRepository->delete($item->user_id);
+
+            if ($item->profile_picture) {
+                Storage::disk('public')->delete($item->profile_picture);
+            }
+
+            $item->delete();
+
+            DB::commit();
+            return true;
         } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
