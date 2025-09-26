@@ -3,23 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
-use App\Http\Requests\SocialAssistanceStoreRequest;
-use App\Http\Requests\SocialAssistanceUpdateRequest;
+use App\Http\Requests\SocialAssistanceRecipientStoreRequest;
+use App\Http\Requests\SocialAssistanceRecipientUpdateRequest;
 use App\Http\Resources\PaginateResource;
-use App\Http\Resources\SocialAssistanceResource;
-use App\Interfaces\SocialAssistanceRepositoryInterface;
-use App\Models\SocialAssistance;
-
+use App\Http\Resources\SocialAssistanceRecipientResource;
+use App\Interfaces\SocialAssistanceRecipientRepositoryInterface;
+use App\Models\SocialAssistanceRecipient;
 use Illuminate\Http\Request;
 
-class SocialAssistanceController extends Controller
+class SocialAssistanceRecipientController extends Controller
 {
+    private SocialAssistanceRecipientRepositoryInterface $socialAssistanceRecipientRepository;
 
-    private SocialAssistanceRepositoryInterface $socialAssistanceRepository;
-
-    public function __construct(SocialAssistanceRepositoryInterface $socialAssistanceRepository)
+    public function __construct(SocialAssistanceRecipientRepositoryInterface $socialAssistanceRecipientRepository)
     {
-        $this->socialAssistanceRepository = $socialAssistanceRepository;
+        $this->socialAssistanceRecipientRepository = $socialAssistanceRecipientRepository;
     }
     /**
      * Display a listing of the resource.
@@ -28,7 +26,7 @@ class SocialAssistanceController extends Controller
     {
         //
         try {
-            $socialAssistance = $this->socialAssistanceRepository->getAll(
+            $socialAssistanceRecipients = $this->socialAssistanceRecipientRepository->getAll(
                 $request->search,
                 $request->limit,
                 true
@@ -36,8 +34,8 @@ class SocialAssistanceController extends Controller
 
             return ResponseHelper::JsonResponse(
                 true,
-                'Social Assistances retrieved successfully',
-                SocialAssistanceResource::collection($socialAssistance),
+                'Social Assistance Recipients retrieved successfully',
+                SocialAssistanceRecipientResource::collection($socialAssistanceRecipients),
                 200
             );
         } catch (\Exception $e) {
@@ -53,15 +51,15 @@ class SocialAssistanceController extends Controller
         ]);
 
         try {
-            $socialAssistances = $this->socialAssistanceRepository->getAllPaginated(
+            $socialAssistanceRecipients = $this->socialAssistanceRecipientRepository->getAllPaginated(
                 $request['search'] ?? null,
                 $request['row_per_page']
             );
 
             return ResponseHelper::JsonResponse(
                 true,
-                'Social Assistances retrieved successfully',
-                PaginateResource::make($socialAssistances, SocialAssistanceResource::class),
+                'Social Assistance Recipients retrieved successfully',
+                new PaginateResource($socialAssistanceRecipients, SocialAssistanceRecipientResource::class),
                 200
             );
         } catch (\Exception $e) {
@@ -72,18 +70,18 @@ class SocialAssistanceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SocialAssistanceStoreRequest $request)
+    public function store(SocialAssistanceRecipientStoreRequest $request)
     {
-        //php 
+        //
         $request = $request->validated();
 
         try {
-            $socialAssistance = $this->socialAssistanceRepository->create($request);
+            $socialAssistanceRecipient = $this->socialAssistanceRecipientRepository->create($request);
 
             return ResponseHelper::JsonResponse(
                 true,
-                'Social Assistance created successfully',
-                new SocialAssistanceResource($socialAssistance),
+                'Social Assistance Recipient created successfully',
+                new SocialAssistanceRecipientResource($socialAssistanceRecipient),
                 201
             );
         } catch (\Exception $e) {
@@ -96,17 +94,17 @@ class SocialAssistanceController extends Controller
      */
     public function show(string $id)
     {
-        //
         try {
-            $socialAssistance = $this->socialAssistanceRepository->getById($id);
-            if (!$socialAssistance) {
-                return ResponseHelper::JsonResponse(false, 'Social Assistance not found', null, 404);
+            $socialAssistanceRecipient = $this->socialAssistanceRecipientRepository->getById($id);
+
+            if (!$socialAssistanceRecipient) {
+                return ResponseHelper::JsonResponse(false, 'Social Assistance Recipient not found', null, 404);
             }
 
             return ResponseHelper::JsonResponse(
                 true,
-                'Social Assistance retrieved successfully',
-                new SocialAssistanceResource($socialAssistance),
+                'Social Assistance Recipient retrieved successfully',
+                new SocialAssistanceRecipientResource($socialAssistanceRecipient),
                 200
             );
         } catch (\Exception $e) {
@@ -117,17 +115,17 @@ class SocialAssistanceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SocialAssistanceUpdateRequest $request, SocialAssistance $socialAssistance)
+    public function update(SocialAssistanceRecipientUpdateRequest $request, SocialAssistanceRecipient $socialAssistanceRecipient)
     {
         $request = $request->validated();
 
         try {
-            $socialAssistance = $this->socialAssistanceRepository->update($socialAssistance, $request);
+            $socialAssistanceRecipient = $this->socialAssistanceRecipientRepository->update($socialAssistanceRecipient, $request);
 
             return ResponseHelper::JsonResponse(
                 true,
                 'Social Assistance updated successfully',
-                new SocialAssistanceResource($socialAssistance),
+                new SocialAssistanceRecipientResource($socialAssistanceRecipient),
                 200
             );
         } catch (\Exception $e) {
@@ -135,19 +133,17 @@ class SocialAssistanceController extends Controller
         }
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SocialAssistance $socialAssistance)
+    public function destroy(SocialAssistanceRecipient $socialAssistanceRecipient)
     {
-        //
         try {
-            $this->socialAssistanceRepository->delete($socialAssistance);
+            $this->socialAssistanceRecipientRepository->delete($socialAssistanceRecipient);
 
             return ResponseHelper::JsonResponse(
                 true,
-                'Social Assistance deleted successfully',
+                'Social Assistance Recipient deleted successfully',
                 null,
                 200
             );
