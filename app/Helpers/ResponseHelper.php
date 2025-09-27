@@ -2,12 +2,14 @@
 
 namespace App\Helpers;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class ResponseHelper
 {
     public static function JsonResponse($success, $message, $data, $statusCode): JsonResponse
     {
+
         return response()->json([
             'success' => $success,
             'message' => $message,
