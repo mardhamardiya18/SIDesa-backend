@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use App\Traits\UUID;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Testing\Fluent\Concerns\Has;
 
 class Development extends Model
 {
     //
 
-    use UUID, SoftDeletes;
+    use UUID, SoftDeletes, HasFactory;
 
     protected $fillable = [
         'thumbnail',
@@ -22,6 +24,15 @@ class Development extends Model
         'budget',
         'status',
     ];
+
+    public function scopeSearch($query, $search)
+    {
+        if ($search) {
+            $query->where('name', 'like', "%$search%");
+        }
+
+        return $query;
+    }
 
     public function developmentApplicants()
     {

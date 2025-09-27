@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             SocialAssistanceSeeder::class,
             EventSeeder::class,
             EventParticipantSeeder::class,
+            DevelopmentSeeder::class,
         ]);
     }
 }
