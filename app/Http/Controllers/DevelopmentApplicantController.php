@@ -10,8 +10,11 @@ use App\Interfaces\DevelopmentApplicantRepositoryInterface;
 use App\Models\Development;
 use App\Models\DevelopmentApplicant;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class DevelopmentApplicantController extends Controller
+class DevelopmentApplicantController extends Controller implements HasMiddleware
 {
 
     private DevelopmentApplicantRepositoryInterface $developmentApplicantRepository;
@@ -19,6 +22,16 @@ class DevelopmentApplicantController extends Controller
     public function __construct(DevelopmentApplicantRepositoryInterface $developmentApplicantRepository)
     {
         $this->developmentApplicantRepository = $developmentApplicantRepository;
+    }
+
+    public static function middleware()
+    {
+        return [
+            new Middleware(PermissionMiddleware::using(['development-applicant-list|development-applicant-edit|development-applicant-delete']), only: ['index', 'getALlPaginated', 'show']),
+            new Middleware(PermissionMiddleware::using(['development-applicant-create']), only: ['store']),
+            new Middleware(PermissionMiddleware::using(['development-applicant-edit']), only: ['update']),
+            new Middleware(PermissionMiddleware::using(['development-applicant-delete']), only: ['destroy'])
+        ];
     }
     /**
      * Display a listing of the resource.

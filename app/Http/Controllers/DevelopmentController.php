@@ -11,8 +11,11 @@ use App\Interfaces\DevelopmentRepositoryInterface;
 use App\Models\Development;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class DevelopmentController extends Controller
+class DevelopmentController extends Controller implements HasMiddleware
 {
 
     private DevelopmentRepositoryInterface $developmentRepository;
@@ -20,6 +23,16 @@ class DevelopmentController extends Controller
     public function __construct(DevelopmentRepositoryInterface $developmentRepository)
     {
         $this->developmentRepository = $developmentRepository;
+    }
+
+    public static function middleware()
+    {
+        return [
+            new Middleware(PermissionMiddleware::using(['development-list|development-edit|development-delete']), only: ['index', 'getALlPaginated', 'show']),
+            new Middleware(PermissionMiddleware::using(['development-create']), only: ['store']),
+            new Middleware(PermissionMiddleware::using(['development-edit']), only: ['update']),
+            new Middleware(PermissionMiddleware::using(['development-delete']), only: ['destroy'])
+        ];
     }
     /**
      * Display a listing of the resource.
