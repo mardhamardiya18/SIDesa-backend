@@ -47,10 +47,13 @@ class AuthRepository implements AuthRepositoryInterface
         if (Auth::check()) {
             $user = Auth::user();
 
-            $user->load('roles.permission');
-            $permissions = $user->roles->flatMap->permission->pluck('name');
+            // load relasi dengan benar
+            $user->load('roles.permissions');
 
-            $role = $user->roles->first()->name;
+            // ambil permissions via roles
+            $permissions = $user->roles->flatMap->permissions->pluck('name');
+
+            $role = optional($user->roles->first())->name;
 
             return response()->json([
                 'message'   => 'User data',
