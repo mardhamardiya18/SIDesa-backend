@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevelopmentApplicantController;
 use App\Http\Controllers\DevelopmentController;
 use App\Http\Controllers\EventController;
@@ -15,6 +16,8 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('dashboard/get-dashboard-data', [DashboardController::class, 'getDashboardData']);
+
     Route::apiResource('user', UserController::class);
     Route::get('user/all/paginated', [UserController::class, 'getallPaginated']);
 
