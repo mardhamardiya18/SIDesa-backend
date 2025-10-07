@@ -16,7 +16,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
     ) {
         // Implementation of the method to get all users
 
-        $query = HeadOfFamily::with('user')->where(function ($query) use ($search) {
+        $query = HeadOfFamily::with(['user', 'familyMembers'])->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }
@@ -73,7 +73,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
     }
     public function getById(string $id)
     {
-        return HeadOfFamily::with(['user', 'familyMembers'])->find($id);
+        return HeadOfFamily::with(['user', 'familyMembers.user'])->find($id);
     }
 
     public function update(object $item, array $data)
@@ -117,6 +117,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
         DB::beginTransaction();
 
         try {
+
 
             if ($item->profile_picture) {
                 Storage::disk('public')->delete($item->profile_picture);

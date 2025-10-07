@@ -18,7 +18,7 @@ class HeadOfFamilyResource extends JsonResource
             'id' => $this->id,
             'user' => new UserResource($this->whenLoaded('user')),
             'family_members' => FamilyMemberResource::collection($this->whenLoaded('familyMembers')),
-            'profile_pictire' => $this->profile_picture,
+            'profile_picture' => asset('storage/' . $this->profile_picture),
             'identity_number' => $this->identity_number,
             'gender' => $this->gender,
             'date_of_birth' => $this->date_of_birth,

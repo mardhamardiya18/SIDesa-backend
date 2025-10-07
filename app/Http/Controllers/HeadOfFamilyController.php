@@ -157,11 +157,12 @@ class HeadOfFamilyController extends Controller implements HasMiddleware
     {
         //
         try {
+
             $this->headOfFamilyRepository->delete($headOfFamily);
 
             return ResponseHelper::JsonResponse(
                 true,
-                'Head of Family deleted successfully',
+                "Head of Family deleted successfully",
                 null,
                 200
             );
