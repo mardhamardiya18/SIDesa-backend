@@ -70,17 +70,19 @@ class SocialAssistanceRepository implements SocialAssistanceRepositoryInterface
         DB::beginTransaction();
 
         try {
+            $item->fill([
+                'name' => $data['name'],
+                'category' => $data['category'],
+                'amount' => $data['amount'],
+                'provider' => $data['provider'],
+                'description' => $data['description'],
+                'is_active' => filter_var($data['is_active'], FILTER_VALIDATE_BOOLEAN),
+            ]);
+
             if (isset($data['thumbnail'])) {
                 $item->thumbnail && Storage::disk('public')->delete($item->thumbnail);
                 $item->thumbnail = $data['thumbnail']->store('assets/social_assistance', 'public');
             }
-
-            $item->name = $data['name'];
-            $item->category = $data['category'];
-            $item->amount = $data['amount'];
-            $item->provider = $data['provider'];
-            $item->description = $data['description'];
-            $item->is_active = $data['is_active'];
             $item->save();
 
             DB::commit();

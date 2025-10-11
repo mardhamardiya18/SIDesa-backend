@@ -23,6 +23,8 @@ class SocialAssistance extends Model
 
     ];
 
+
+
     public function scopeSearch($query, $search)
     {
         if ($search) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,14 +18,14 @@ class SocialAssistanceResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'thumbnail' => $this->thumbnail,
+            'thumbnail' => asset('storage/' . $this->thumbnail),
             'name' => $this->name,
             'description' => $this->description,
             'category' => $this->category,
             'amount' => $this->amount,
             'provider' => $this->provider,
             'is_active' => $this->is_active,
-
+            'social_assistance_recipients' => SocialAssistanceRecipientResource::collection($this->socialAssistanceRecipients)
         ];
     }
 }

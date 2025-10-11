@@ -18,7 +18,7 @@ class HeadOfFamilyStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
             'profile_picture' => 'required|image|max:2048',
             'identity_number' => 'required|string|size:10|unique:head_of_families',
             'gender' => 'required|in:male,female|string',
@@ -32,7 +32,7 @@ class HeadOfFamilyStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'Name',
+            'name' => 'Nama',
             'email' => 'Email',
             'password' => 'Kata Sandi',
             'profile_picture' => 'Foto Profil',

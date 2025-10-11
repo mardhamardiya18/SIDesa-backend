@@ -133,6 +133,7 @@ class SocialAssistanceController extends Controller implements HasMiddleware
      */
     public function update(SocialAssistanceUpdateRequest $request, SocialAssistance $socialAssistance)
     {
+
         $request = $request->validated();
 
         try {
