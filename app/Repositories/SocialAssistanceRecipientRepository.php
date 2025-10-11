@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\SocialAssistanceRecipientRepositoryInterface;
 use App\Models\SocialAssistanceRecipient;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -66,7 +67,7 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
 
     public function getById(string $id)
     {
-        return SocialAssistanceRecipient::with('socialAssistance', 'headOfFamily.user')->find($id);
+        return SocialAssistanceRecipient::with(['socialAssistance', 'headOfFamily.user', 'headOfFamily.familyMembers'])->find($id);
     }
 
     public function update(object $item, array $data)
@@ -80,8 +81,12 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
             $item->reason = $data['reason'];
             $item->bank = $data['bank'];
             $item->bank_account_number = $data['bank_account_number'];
-            if (isset($data['proof'])) {
-                $item->proof && Storage::disk('public')->delete($item->proof);
+            // Aman untuk semua kasus: file baru, string kosong, null, dsb.
+            if (isset($data['proof']) && $data['proof'] instanceof UploadedFile) {
+                if ($item->proof) {
+                    Storage::disk('public')->delete($item->proof);
+                }
+
                 $item->proof = $data['proof']->store('assets/social_assistance_recipients', 'public');
             }
             $item->status = $data['status'];

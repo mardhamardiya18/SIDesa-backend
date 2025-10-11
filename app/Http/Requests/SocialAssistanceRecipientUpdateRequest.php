@@ -17,7 +17,7 @@ class SocialAssistanceRecipientUpdateRequest extends FormRequest
             'reason' => 'required|string',
             'bank' => 'required|in:bri,bni,mandiri,bca',
             'bank_account_number' => 'required|numeric',
-            'proof' => 'nullable|image|max:2048',
+            'proof' => 'nullable|max:2048',
             'status' => 'required|in:pending,approved,rejected',
 
         ];
