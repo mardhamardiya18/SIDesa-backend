@@ -17,7 +17,7 @@ class DevelopmentRepository implements DevelopmentRepositoryInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = Development::where(function ($query) use ($search) {
+        $query = Development::with('developmentApplicants.user')->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }

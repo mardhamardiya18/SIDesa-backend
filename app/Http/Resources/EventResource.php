@@ -17,14 +17,14 @@ class EventResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'thumbnail' => $this->thumbnail,
+            'thumbnail' => asset('storage/' . $this->thumbnail),
             'name' => $this->name,
             'description' => $this->description,
             'date' => $this->date,
             'time' => $this->time,
             'price' => $this->price,
             'is_active' => $this->is_active,
-
+            'event_participants' => EventParticipantResource::collection($this->whenLoaded('eventParticipants')),
         ];
     }
 }

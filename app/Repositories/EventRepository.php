@@ -14,7 +14,7 @@ class EventRepository implements EventRepositoryInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = Event::where(function ($query) use ($search) {
+        $query = Event::with('eventParticipants')->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }
@@ -66,7 +66,15 @@ class EventRepository implements EventRepositoryInterface
 
     public function getById(string $id)
     {
-        return Event::find($id);
+        $limit = 5;
+
+        return Event::with([
+            'eventParticipants' => function ($query) use ($limit) {
+                // Tambahkan query limit() ke relasi eventParticipants
+                $query->limit($limit);
+                $query->with('headOfFamily.user');
+            }
+        ])->find($id);
     }
 
     public function update(object $item, array $data)
