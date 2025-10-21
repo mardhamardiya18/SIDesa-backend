@@ -19,8 +19,9 @@ class ProfileRepository implements \App\Interfaces\ProfileRepositoryInterface
     {
         DB::beginTransaction();
         try {
-            $profile = new Profile();
-            $profile->thumbnail         = $data['thumbnail']->store('assets/profile', 'public');
+            $profile = new Profile;
+
+            $profile->thumbnail = $data['thumbnail']->store('assets/profile', 'public');
             $profile->name              = $data['name'];
             $profile->about             = $data['about'];
             $profile->headman           = $data['headman'];
@@ -28,15 +29,17 @@ class ProfileRepository implements \App\Interfaces\ProfileRepositoryInterface
             $profile->agricultural_area = $data['agricultural_area'];
             $profile->total_area        = $data['total_area'];
 
+            $profile->save();
+
             if (array_key_exists('images', $data)) {
                 foreach ($data['images'] as $image) {
                     $profile->profileImages()->create([
-                        'image' => $image->store('assets/profile/images', 'public')
+                        'image' => $image->store('assets/profile', 'public')
                     ]);
                 }
             }
 
-            $profile->save();
+
             DB::commit();
 
             return $profile;
