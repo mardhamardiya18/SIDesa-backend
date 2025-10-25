@@ -22,6 +22,11 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
 
         $query->latest();
 
+        if (auth()->user()->hasRole('head-of-family')) {
+            $headOfFamily = auth()->user()->headOfFamily;
+            $query->where('head_of_family_id', $headOfFamily->id);
+        }
+
         if ($limit) {
             $query->take($limit);
         }

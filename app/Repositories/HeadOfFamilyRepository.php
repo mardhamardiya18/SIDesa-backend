@@ -53,6 +53,8 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
                 'password' => $data['password'],
             ]);
 
+            $user->assignRole('head-of-family');
+
             $headOfFamily = new HeadOfFamily();
             $headOfFamily->user_id = $user->id;
             $headOfFamily->profile_picture = $data['profile_picture']->store('assets/head_of_family', 'public');

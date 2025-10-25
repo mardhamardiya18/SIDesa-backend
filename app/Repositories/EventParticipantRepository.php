@@ -14,13 +14,18 @@ class EventParticipantRepository implements EventParticipantRepositoryInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = EventParticipant::with(['event', 'headOfFamily.user'])->where(function ($query) use ($search) {
+        $query = EventParticipant::with(['event.eventParticipants', 'headOfFamily.user'])->where(function ($query) use ($search) {
             if ($search) {
                 $query->search($search);
             }
         });
 
         $query->latest();
+
+        if (auth()->user()->hasRole('head-of-family')) {
+            $headOfFamily = auth()->user()->headOfFamily;
+            $query->where('head_of_family_id', $headOfFamily->id);
+        }
 
         if ($limit) {
             $query->limit($limit);
