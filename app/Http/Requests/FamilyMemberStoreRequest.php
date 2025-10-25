@@ -18,7 +18,7 @@ class FamilyMemberStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
             'head_of_family_id' => 'required|exists:head_of_families,id',
             'profile_picture' => 'required|image|max:2048',
             'identity_number' => 'required|string|size:10|unique:head_of_families',
