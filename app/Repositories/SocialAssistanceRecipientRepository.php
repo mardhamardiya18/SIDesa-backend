@@ -57,7 +57,13 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
             $socialAssistanceRecipient->reason = $data['reason'];
             $socialAssistanceRecipient->bank = $data['bank'];
             $socialAssistanceRecipient->bank_account_number = $data['bank_account_number'];
-            $socialAssistanceRecipient->proof = $data['proof']->store('assets/social_assistance_recipients', 'public');
+            if (isset($data['proof'])) {
+                // Jika ada, simpan file-nya
+                $socialAssistanceRecipient->proof = $data['proof']->store('assets/social_assistance_recipients', 'public');
+            } else {
+                // Jika tidak ada (opsional/nullable), set nilainya ke null di database
+                $socialAssistanceRecipient->proof = null;
+            }
             $socialAssistanceRecipient->status = $data['status'];
 
             $socialAssistanceRecipient->save();

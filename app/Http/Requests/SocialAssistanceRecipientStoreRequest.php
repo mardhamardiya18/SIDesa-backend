@@ -24,8 +24,8 @@ class SocialAssistanceRecipientStoreRequest extends FormRequest
             'reason' => 'required|string',
             'bank' => 'required|in:bri,bni,mandiri,bca',
             'bank_account_number' => 'required|numeric',
-            'proof' => 'required|image|max:2048',
-            'status' => 'required|in:pending,approved,rejected',
+            'proof' => 'nullable|image|max:2048',
+            'status' => 'nullable|in:pending,approved,rejected',
 
         ];
     }
@@ -42,5 +42,15 @@ class SocialAssistanceRecipientStoreRequest extends FormRequest
             'proof' => 'Bukti',
             'status' => 'Status',
         ];
+    }
+
+    public function prepareForValidation()
+    {
+        $user = auth()->user();
+        if ($user->hasRole('head-of-family')) {
+            $this->merge([
+                'head_of_family_id' => $user->headOfFamily->id,
+            ]);
+        }
     }
 }
