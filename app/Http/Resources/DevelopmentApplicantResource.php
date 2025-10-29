@@ -20,6 +20,7 @@ class DevelopmentApplicantResource extends JsonResource
             'development' => new DevelopmentResource($this->whenLoaded('development')),
             'user' => new UserResource($this->whenLoaded('user')),
             'status' => $this->status,
+            'created_at' => $this->created_at
         ];
     }
 }

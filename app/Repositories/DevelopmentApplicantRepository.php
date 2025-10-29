@@ -51,7 +51,7 @@ class DevelopmentApplicantRepository implements DevelopmentApplicantRepositoryIn
 
             $applicant->development_id = $data['development_id'];
             $applicant->user_id        = $data['user_id'];
-            $applicant->status         = $data['status'];
+            $applicant->status         = 'pending';
 
             $applicant->save();
             DB::commit();

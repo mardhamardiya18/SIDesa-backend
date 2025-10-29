@@ -42,6 +42,7 @@ class DevelopmentController extends Controller implements HasMiddleware
         try {
             $developments = $this->developmentRepository->getAll(
                 $request->search,
+                $request->status,
                 $request->limit,
                 true
             );
@@ -62,11 +63,13 @@ class DevelopmentController extends Controller implements HasMiddleware
         $request = $request->validate([
             'search' => 'nullable|string',
             'row_per_page' => 'required|integer',
+            'status' => 'nullable|string',
         ]);
 
         try {
             $developments = $this->developmentRepository->getAllPaginated(
                 $request['search'] ?? null,
+                $request['status'] ?? null,
                 $request['row_per_page']
             );
 
@@ -108,7 +111,7 @@ class DevelopmentController extends Controller implements HasMiddleware
     public function show(Development $development)
     {
         try {
-
+            $development->load('developmentApplicants.user.familyMembers');
             return ResponseHelper::JsonResponse(
                 true,
                 'Development retrieved successfully',

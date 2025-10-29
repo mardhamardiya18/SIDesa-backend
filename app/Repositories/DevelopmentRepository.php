@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Helpers\ResponseHelper;
 use App\Interfaces\DevelopmentRepositoryInterface;
 use App\Models\Development;
+use App\Models\FamilyMember;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,7 @@ class DevelopmentRepository implements DevelopmentRepositoryInterface
 {
     public function getAll(
         ?string $search,
+        ?string $status,
         ?int $limit,
         bool $execute
     ) {
@@ -22,6 +24,15 @@ class DevelopmentRepository implements DevelopmentRepositoryInterface
                 $query->search($search);
             }
         });
+
+        if ($status === 'my-applications') {
+            $query->whereHas('developmentApplicants', function ($q) {
+                $members = FamilyMember::where('head_of_family_id', auth()->user()->headOfFamily->id)->pluck('user_id')->toArray();
+                $members[] = auth()->user()->id;
+
+                $q->whereIn('user_id', $members);
+            });
+        }
 
         $query->latest();
 
@@ -38,9 +49,10 @@ class DevelopmentRepository implements DevelopmentRepositoryInterface
 
     public function getAllPaginated(
         ?string $search,
+        ?string $status,
         ?int $rowsPerPage,
     ) {
-        $query = $this->getAll($search, $rowsPerPage, false);
+        $query = $this->getAll($search, $status, $rowsPerPage, false);
 
         return $query->paginate($rowsPerPage);
     }
