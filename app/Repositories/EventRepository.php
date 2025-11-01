@@ -12,6 +12,7 @@ class EventRepository implements EventRepositoryInterface
     public function getAll(
         ?string $search,
         ?int $limit,
+        ?string $status,
         bool $execute
     ) {
         $query = Event::with('eventParticipants')->where(function ($query) use ($search) {
@@ -19,6 +20,12 @@ class EventRepository implements EventRepositoryInterface
                 $query->search($search);
             }
         });
+
+        if ($status === 'joined') {
+            $query->whereHas('eventParticipants', function ($q) {
+                $q->where('head_of_family_id', auth()->user()->headOfFamily->id);
+            });
+        }
 
         $query->latest();
 
@@ -35,8 +42,9 @@ class EventRepository implements EventRepositoryInterface
     public function getAllPaginated(
         ?string $search,
         ?int $rowsPerPage,
+        ?string $status,
     ) {
-        $query = $this->getAll($search, $rowsPerPage, false);
+        $query = $this->getAll($search, $rowsPerPage, $status, false);
 
         return $query->paginate($rowsPerPage);
     }

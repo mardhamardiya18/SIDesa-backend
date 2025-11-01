@@ -7,12 +7,14 @@ interface EventRepositoryInterface
     public function getAll(
         ?string $search,
         ?int $limit,
+        ?string $status,
         bool $execute
     );
 
     public function getAllPaginated(
         ?string $search,
         ?int $rowsPerPage,
+        ?string $status,
     );
 
     public function create(array $data);

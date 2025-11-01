@@ -64,6 +64,24 @@ class EventParticipantRepository implements EventParticipantRepositoryInterface
             $eventParticipant->save();
             DB::commit();
 
+            \Midtrans\Config::$serverKey = config('midtrans.server_key');
+            \Midtrans\Config::$isProduction = config('midtrans.is_production');
+            \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
+            \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
+
+            $params = array(
+                'transaction_details' => array(
+                    'order_id' => $eventParticipant->id,
+                    'gross_amount' => $eventParticipant->total_price,
+                ),
+                'customer_details' => array(
+                    'first_name' => auth()->user()->name,
+                ),
+            );
+
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+            $eventParticipant->snap_token = $snapToken;
+
             return $eventParticipant;
         } catch (\Exception $e) {
             DB::rollBack();

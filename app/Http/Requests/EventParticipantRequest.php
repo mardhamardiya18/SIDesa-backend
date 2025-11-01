@@ -36,4 +36,14 @@ class EventParticipantRequest extends FormRequest
 
         ];
     }
+
+    public function prepareForValidation()
+    {
+        $user = auth()->user();
+        if ($user->hasRole('head-of-family')) {
+            $this->merge([
+                'head_of_family_id' => $user->headOfFamily->id,
+            ]);
+        }
+    }
 }
